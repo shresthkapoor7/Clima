@@ -1,13 +1,40 @@
+import 'package:clima/services/weather.dart';
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
 
 class LocationScreen extends StatefulWidget {
+  LocationScreen({this.locationWeather});
+  final locationWeather;
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  num temprature;
+  num condition;
+  String cityName;
+  String temp;
+  String message;
+  String weatherIcon;
+  WeatherModel objWeatherModel = new WeatherModel();
   @override
+  void initState() {
+    super.initState();
+    updateUI(widget.locationWeather);
+  }
+
+  void updateUI(dynamic weatherData) {
+    setState(() {
+      temprature = weatherData['main']['temp'];
+      condition = weatherData['weather'][0]['id'];
+      cityName = weatherData['name'];
+      temp = temprature.toStringAsFixed(0);
+
+      message = objWeatherModel.getMessage(int.parse(temp));
+      weatherIcon = objWeatherModel.getWeatherIcon(condition);
+    });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -44,11 +71,11 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    '32°',
+                    '$temp°',
                     style: kTempTextStyle,
                   ),
                   Text(
-                    '☀️',
+                    weatherIcon,
                     style: kConditionTextStyle,
                   ),
                 ],
@@ -56,7 +83,7 @@ class _LocationScreenState extends State<LocationScreen> {
               Padding(
                 padding: EdgeInsets.only(left: 20.0, right: 20),
                 child: Text(
-                  "It's 🍦 time in San Francisco!",
+                  '$message in $cityName!',
                   textAlign: TextAlign.center,
                   style: kMessageTextStyle,
                 ),
@@ -68,3 +95,5 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 }
+
+// 
